@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/smtp"
 	"os"
+	"strconv"
 
 	"github.com/karlozz157/stori/app/mailers"
 )
@@ -18,8 +19,15 @@ type StmpMailer struct {
 	Password string
 }
 
-func NewEmailService() mailers.Mailer {
-	return &StmpMailer{}
+func NewStmpMailer() mailers.Mailer {
+	port, _ := strconv.Atoi(os.Getenv("EMAIL_PORT"))
+
+	return &StmpMailer{
+		Host:     os.Getenv("EMAIL_HOST"),
+		Port:     port,
+		Username: os.Getenv("EMAIL_USERNAME"),
+		Password: os.Getenv("EMAIL_PASSWORD"),
+	}
 }
 
 func (s *StmpMailer) SendEmail(emailData mailers.EmailData) error {

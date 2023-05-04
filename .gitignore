@@ -1,0 +1,34 @@
+# Binarios
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Binarios de Go
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Archivos temporales
+tmp/
+temp/
+*.log
+*.swp
+*~
+
+# Dependencias
+/vendor/
+
+# Archivos de caché de Go
+.cache/
+*.test
+
+# Archivos de configuración de Go
+.idea/
+.vscode/
+
+*.db

@@ -1,4 +1,4 @@
-package adapters_test
+package parsers_test
 
 import (
 	"testing"
