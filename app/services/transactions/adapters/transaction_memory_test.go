@@ -43,15 +43,15 @@ func TestTransactionMemoryService(t *testing.T) {
 		t.Errorf("Balance incorrecto. Se esperaba %.2f pero se obtuvo %.2f", expectedBalance, balance)
 	}
 
-	credit, _ := service.GetCredit()
+	credit, _ := service.GetAverageCredit()
 	expectedCredit := 1000.00
 	if credit != expectedCredit {
 		t.Errorf("Credito incorrecto. Se esperaba %.2f pero se obtuvo %.2f", expectedCredit, credit)
 
 	}
 
-	debit, _ := service.GetDebit()
-	expectedDebit := 600.00
+	debit, _ := service.GetAverageDebit()
+	expectedDebit := 300.00
 	if debit != expectedDebit {
 		t.Errorf("Debito incorrecto. Se esperaba %.2f pero se obtuvo %.2f", expectedDebit, debit)
 	}

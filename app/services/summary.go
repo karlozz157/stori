@@ -34,35 +34,41 @@ func (s *SummaryService) CreateSummary() error {
 
 func (s *SummaryService) GetSummary() models.Summary {
 	balance, _ := s.transactionService.GetBalance()
-	credit, _ := s.transactionService.GetCredit()
-	debit, _ := s.transactionService.GetDebit()
+	credit, _ := s.transactionService.GetAverageCredit()
+	debit, _ := s.transactionService.GetAverageDebit()
+	numberOfTransactions, _ := s.transactionService.GetNumberOfTransactionsGrouped()
 
 	return models.Summary{
-		Balance: balance,
-		Credit:  credit,
-		Debit:   debit,
+		Balance:              balance,
+		Credit:               credit,
+		Debit:                debit,
+		NumberOfTransactions: numberOfTransactions,
 	}
 }
 
 func (s *SummaryService) CreateAndSendSummary() error {
-	s.CreateSummary()
+	if err := s.CreateSummary(); err != nil {
+		return err
+	}
+
 	summary := s.GetSummary()
-	s.sendEmail(summary)
+
+	if err := s.sendEmail(summary); err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (s *SummaryService) sendEmail(summary models.Summary) error {
-	if err := s.mailerService.SendEmail(mailers.EmailData{
+	err := s.mailerService.SendEmail(mailers.EmailData{
 		To:       []string{os.Getenv("EMAIL_TO")},
 		Subject:  os.Getenv("EMAIL_SUBJECT"),
 		Template: os.Getenv("EMAIL_TEMPLATE"),
 		Data:     summary,
-	}); err != nil {
-		return err
-	}
+	})
 
-	return nil
+	return err
 }
 
 func (s *SummaryService) geTransactionsFromCsv(filepath string) []models.Transaction {

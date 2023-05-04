@@ -39,31 +39,30 @@ func (h *transactionHandler) helloWorld(w http.ResponseWriter, r *http.Request) 
 
 func (h *transactionHandler) createSummary(w http.ResponseWriter, r *http.Request) {
 	err := h.summaryService.CreateSummary()
-
-	message := "summary was created"
-	if err != nil {
-		message = err.Error()
-	}
-
-	json.NewEncoder(w).Encode(models.Response{
-		Message: message,
-	})
+	h.handleResponse(w, err)
 }
 
 func (h *transactionHandler) createAndSendSummary(w http.ResponseWriter, r *http.Request) {
 	err := h.summaryService.CreateAndSendSummary()
-
-	message := "summary was sent"
-	if err != nil {
-		message = err.Error()
-	}
-
-	json.NewEncoder(w).Encode(models.Response{
-		Message: message,
-	})
+	h.handleResponse(w, err)
 }
 
 func (h *transactionHandler) getSummary(w http.ResponseWriter, r *http.Request) {
 	summary := h.summaryService.GetSummary()
 	json.NewEncoder(w).Encode(summary)
+}
+
+func (h *transactionHandler) handleResponse(w http.ResponseWriter, err error) {
+	statusCode := http.StatusOK
+	response := models.Response{
+		Message: "ok",
+	}
+
+	if err != nil {
+		statusCode = http.StatusInternalServerError
+		response.Message = err.Error()
+	}
+
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(response)
 }

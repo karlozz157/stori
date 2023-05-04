@@ -60,12 +60,12 @@ func (t *transactionStorage) GetBalance() (float64, error) {
 	return (debit - credit), nil
 }
 
-func (t *transactionStorage) GetCredit() (float64, error) {
-	return t.getBalanceByMovement(models.Credit)
+func (t *transactionStorage) GetAverageCredit() (float64, error) {
+	return t.getAverageByMovement(models.Credit)
 }
 
-func (t *transactionStorage) GetDebit() (float64, error) {
-	return t.getBalanceByMovement(models.Debit)
+func (t *transactionStorage) GetAverageDebit() (float64, error) {
+	return t.getAverageByMovement(models.Debit)
 }
 
 func (t *transactionStorage) GetNumberOfTransactionsGrouped() (map[time.Month]int, error) {
@@ -108,6 +108,20 @@ func (t *transactionStorage) createTable() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (t *transactionStorage) getAverageByMovement(movement models.Movement) (float64, error) {
+	var balance, result float64
+	var movements int
+
+	sql := "SELECT SUM(amount) AS balance, COUNT(id) AS movements FROM transactions WHERE movement = ?"
+	err := t.db.QueryRow(sql, movement).Scan(&balance, &movements)
+
+	if movements > 0 {
+		result = balance / float64(movements)
+	}
+
+	return result, err
 }
 
 func (t *transactionStorage) getBalanceByMovement(movement models.Movement) (float64, error) {

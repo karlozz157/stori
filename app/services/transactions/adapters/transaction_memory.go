@@ -46,12 +46,12 @@ func (t *transactionMemory) GetBalance() (float64, error) {
 	return balance, nil
 }
 
-func (t *transactionMemory) GetCredit() (float64, error) {
-	return t.getBalanceByMovement(models.Credit)
+func (t *transactionMemory) GetAverageCredit() (float64, error) {
+	return t.getAverageByMovement(models.Credit)
 }
 
-func (t *transactionMemory) GetDebit() (float64, error) {
-	return t.getBalanceByMovement(models.Debit)
+func (t *transactionMemory) GetAverageDebit() (float64, error) {
+	return t.getAverageByMovement(models.Debit)
 }
 
 func (t *transactionMemory) GetNumberOfTransactionsGrouped() (map[time.Month]int, error) {
@@ -69,14 +69,20 @@ func (t *transactionMemory) Init() {
 	t.transactions = []models.Transaction{}
 }
 
-func (t *transactionMemory) getBalanceByMovement(movement models.Movement) (float64, error) {
-	var balance float64
+func (t *transactionMemory) getAverageByMovement(movement models.Movement) (float64, error) {
+	var balance, result float64
+	movements := 0
 
 	for _, transaction := range t.transactions {
 		if transaction.Movement == movement {
+			movements++
 			balance += transaction.Amount
 		}
 	}
 
-	return balance, nil
+	if movements > 0 {
+		result = balance / float64(movements)
+	}
+
+	return result, nil
 }
